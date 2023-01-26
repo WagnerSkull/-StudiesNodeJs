@@ -1,16 +1,18 @@
-
-
 {
   "name": "first-project",
   "version": "1.0.0",
   "description": "Meu primeiro projeto NODE",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon"
   },
   "author": "Desenvolvedor WagnerSkull",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
