@@ -15,6 +15,7 @@
 //Ativando o express
 const express = require("express")
 
+//Foi instalado a biblioteca UUID, como instalar (npm install uuid), Usando a tipo V4.
 //Variavel para salvar a biblioteca UUID
 const uuid = require("uuid")
 
@@ -27,7 +28,7 @@ const app = express()
 //Falando pro express que vamos usar como padrão o express. 
 app.use(express.json())
 
-
+//Nesse projeto guardamos em uma variavel mais nunca guardar em variavel por que se reiniciar o servidor node perdermos todos dados.
 const users = []
 
 
@@ -50,6 +51,52 @@ app.post('/users', (request, response) => {
 
     return response.status(201).json(user)
 })
+
+//Pra alterar/atualizar o back-end dados já salvos.
+app.put('/users/:id', (request, response) => {
+
+    //Vamos usar o route params, busca o id. 
+    const { id } = request.params
+
+    //Pegando as informações novas do usuário.
+    const { name, age } = request.body
+
+    //Montando o usuário
+    const updatedUser = { id, name, age}
+
+    //Ele vai procurar o id 
+    const index = users.findIndex(user => user.id === id)
+
+    //Mensagem caso não encontre o usuário pelo ID
+    if(index < 0){
+        return response.status(404).json({ message: 'User not found'})
+    }
+
+    //Pra fazer a atualização
+    users[index] = updatedUser
+    return response.json(updatedUser)
+})
+
+//Pra deletar usuário
+app.delete('/users/:id', (request, response) => {
+
+    //Selecionando o ID
+    const { id } = request.params
+
+//Pra achar o usuario que vamos deletar pelo ID 
+const index = users.findIndex(user => user.id === id)
+
+//Mensagem caso não encontre o usuário pelo ID
+if(index < 0){
+    return response.status(404).json({ message: 'User not found'})
+}
+
+//pra encontrar o usuário pelo id, e quantos usuário vai apagar
+users.splice(index,1)
+
+    return response.status(204).json()
+})
+
 
 
 //Nós podemos escolher o número da porta, Porem não são qualquer número, do numero 80 pra cima. 
