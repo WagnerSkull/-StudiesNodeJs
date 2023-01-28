@@ -46,7 +46,7 @@ app.post('/users', (request, response) => {
     const user = { id: uuid.v4(), name, age }
 
     users.push(user)
-
+    
     return response.status(201).json(user)
 
 })
@@ -56,7 +56,7 @@ app.post('/users', (request, response) => {
 //Alguns números já são usado por alguns bancos de dados, e instalando ele já vem com uma porta especifica do computador
 //Função Expresse PORTA- Ela aceita o segundo paramentro pra quando servidor começar a rodar, da pra dicionar função. tipo mensagem
 app.listen(port, () => {
-    console.log("GOGO Server starded on port ${port}")
+    console.log(`GOGO Server starded on port ${port}`)
 })
 
 
