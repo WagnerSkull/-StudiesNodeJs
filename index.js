@@ -12,7 +12,11 @@
 //ROUTE params => /users/2 // BUSCAR, DELETAR OU ATUALIZAR ALGO ESPECÌFICO
 //REQUEST BODY => {'name': 'Rodolfo', 'age':}
 
+//MIDDLEWARES => INTERCEPTADOR => Tem o poder de parar ou alterar dados da requisição.
+
+
 //Ativando o express
+const { request } = require("express")
 const express = require("express")
 
 //Foi instalado a biblioteca UUID, como instalar (npm install uuid), Usando a tipo V4.
@@ -31,10 +35,32 @@ app.use(express.json())
 //Nesse projeto guardamos em uma variavel mais nunca guardar em variavel por que se reiniciar o servidor node perdermos todos dados.
 const users = []
 
+//Criando MIDDLEWARES => INTERCEPTADOR => Tem o poder de parar ou alterar dados da requisição.
+const checkUserId = (request, response, next) => {
+
+    //Vamos usar o route params, busca o id e ver se existe.
+    const { id } = request.params
+
+    //Ele vai procurar o id pra ver se existe
+    const index = users.findIndex(user => user.id === id)
+
+    //Mensagem caso não encontre o usuário pelo ID
+    if (index < 0) {
+        return response.status(404).json({ ERROR: 'User not found' })
+    }
+
+    //Se existir vai pega a informação e adicionar uma informação no REQUEST
+    request.userIndex = index
+
+    request.userId = id
+
+    next()
+}
 
 //Criando rota do express, Request requisitando, reponse respondendo.
 //Meu app GET mostra todos meus usuarios (USERS)
 app.get('/users', (request, response) => {
+
 
     return response.json(users)
 })
@@ -53,24 +79,20 @@ app.post('/users', (request, response) => {
 })
 
 //Pra alterar/atualizar o back-end dados já salvos.
-app.put('/users/:id', (request, response) => {
-
-    //Vamos usar o route params, busca o id. 
-    const { id } = request.params
+app.put('/users/:id', checkUserId, (request, response) => {
 
     //Pegando as informações novas do usuário.
     const { name, age } = request.body
 
+    //Se existir o ID vai pega a informação e adicionar uma informação no REQUEST
+    const index = request.userIndex
+
+    //Achando o ID
+    const id = request.userId
+
     //Montando o usuário
-    const updatedUser = { id, name, age}
+    const updatedUser = { id, name, age }
 
-    //Ele vai procurar o id 
-    const index = users.findIndex(user => user.id === id)
-
-    //Mensagem caso não encontre o usuário pelo ID
-    if(index < 0){
-        return response.status(404).json({ message: 'User not found'})
-    }
 
     //Pra fazer a atualização
     users[index] = updatedUser
@@ -78,21 +100,13 @@ app.put('/users/:id', (request, response) => {
 })
 
 //Pra deletar usuário
-app.delete('/users/:id', (request, response) => {
+app.delete('/users/:id', checkUserId, (request, response) => {
 
-    //Selecionando o ID
-    const { id } = request.params
+    //Se existir o ID vai pega a informação e adicionar uma informação no REQUEST
+    const index = request.userIndex
 
-//Pra achar o usuario que vamos deletar pelo ID 
-const index = users.findIndex(user => user.id === id)
-
-//Mensagem caso não encontre o usuário pelo ID
-if(index < 0){
-    return response.status(404).json({ message: 'User not found'})
-}
-
-//pra encontrar o usuário pelo id, e quantos usuário vai apagar
-users.splice(index,1)
+    //pra encontrar o usuário pelo id, e quantos usuário vai apagar
+    users.splice(index, 1)
 
     return response.status(204).json()
 })
@@ -103,7 +117,7 @@ users.splice(index,1)
 //Alguns números já são usado por alguns bancos de dados, e instalando ele já vem com uma porta especifica do computador
 //Função Expresse PORTA- Ela aceita o segundo paramentro pra quando servidor começar a rodar, da pra dicionar função. tipo mensagem
 app.listen(port, () => {
-    console.log(`GOGO Server starded on port ${port}`)
+    console.log(`GOGO=> Server starded on port ${port}`)
 })
 
 
