@@ -1,4 +1,5 @@
 // Sempre que for enviar pro GITHub, apagar node_modules, após 
+//Pra não subir a node_modules, criar o arquivo(.gitignore), coloca o nome do arquivo que não e pra subir e salva,(node_modules)
 //só instalar novamente usando os comando npm i, isso ira instalar os que foi apagado.
 //Pra iniciar o node , node index.js 
 //Iniciar servidor (npm run dev)
